@@ -6,7 +6,7 @@ from __future__ import annotations
 import asyncio
 import logging
 from types import TracebackType
-from typing import Final, Type
+from typing import Final, Sequence, Type
 
 import uvloop
 
@@ -58,3 +58,6 @@ class Runner:
     ) -> None:
         """Shut down the runner safely."""
         self.close()
+
+
+__all__: Final[Sequence[str]] = ("Runner",)
