@@ -9,4 +9,4 @@
 
 # aiopyproxy
 
-A simple HTTP proxy in pure Python.
+A simple HTTP proxy in Python.
