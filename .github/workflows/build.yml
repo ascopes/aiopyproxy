@@ -1,0 +1,90 @@
+name: Build
+on:
+  pull_request:
+    branches: [ main ]
+    types: [ opened, synchronize ]
+  push:
+    branches: [ main ]
+  schedule:
+    # Run a build once per week on the main branch.
+    - cron: "0 0 * * 0"
+
+jobs:
+  codeql:
+    name: Run CodeQL Analysis
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v2
+        with:
+          languages: python
+
+      # This can be replaced with a manual build if this begins to fail for any reason.
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v2
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v2
+
+  analysis:
+    name: Run code analysis
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+
+      - name: Install base dependencies
+        run: poetry install --no-root
+
+      - name: Check code formatting
+        run: poetry run nox -s check_formatting
+
+      - name: Run flake8 lint
+        run: poetry run nox -s flake8
+
+      - name: Run pyright type checking
+        run: poetry run nox -s pyright
+
+  security:
+    name: Run security checks
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+
+      - name: Install base dependencies
+        run: poetry install --no-root
+
+      - name: Run static application security tests
+        run: poetry run nox -s sast
+
+      - name: Run software composition analysis
+        run: poetry run nox -s sca
