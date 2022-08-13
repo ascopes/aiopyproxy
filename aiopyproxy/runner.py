@@ -16,6 +16,9 @@ logger: Final[logging.Logger] = logging.getLogger(__name__)
 class Runner:
     """Proxy server runner implementation."""
 
+    #: The event loop being used by the runner.
+    _loop: asyncio.AbstractEventLoop
+
     def __init__(self, *, use_uvloop: bool = True) -> None:
         """Initialize the runner.
 
@@ -43,7 +46,8 @@ class Runner:
         self._loop.stop()
         self._loop.close()
 
-    async def _run(self) -> None:
+    @staticmethod
+    async def _run() -> None:
         logger.info("Hello, World!")
 
     def __enter__(self) -> Runner:
