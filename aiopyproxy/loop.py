@@ -68,4 +68,4 @@ def tidy_up_and_close(loop: asyncio.AbstractEventLoop) -> None:
     loop.close()
 
 
-__all__: Final[Sequence[str]] = ("new_event_loop",)
+__all__: Final[Sequence[str]] = ("new_event_loop", "tidy_up_and_close")

@@ -77,3 +77,6 @@ class ForwardingProxy(server.Server):
             await server_resp.write_eof()
 
             return server_resp
+
+
+__all__: Final[Sequence[str]] = ("ForwardingProxy",)

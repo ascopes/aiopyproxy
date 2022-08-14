@@ -130,3 +130,6 @@ class Server(abc.ABC):
         aiohttp.web.StreamResponse
             Some form of HTTP response.
         """
+
+
+__all__: Final[Sequence[str]] = ("Server",)
