@@ -18,7 +18,7 @@ uvloop = "^0.16"
 
 # Packages that will speed up aiohttp by being present. Not used directly.
 aiodns = "^3.0.0"
-cchardet = "2.1.7"
+cchardet = "^2.1.7"
 
 [tool.poetry.dev-dependencies]
 nox = "2022.8.7"
