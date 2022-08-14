@@ -35,8 +35,6 @@ flake8_plugins = [
     "flake8-pytest ~= 1.4",
     # Lint the use of 'raise'.
     "flake8-raise ~= 0.0",
-    # Lint the use of return values.
-    "flake8-return ~= 0.1",
     # Enforce string formatting uses f-strings.
     "flake8-use-fstring ~= 1.4",
 ]

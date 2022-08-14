@@ -8,7 +8,7 @@ import click
 import colorlog
 
 from aiopyproxy import _meta as meta
-from aiopyproxy import runner
+from aiopyproxy import forwarding, loop
 
 _logging_levels: Final[Sequence[str]] = (
     "OFF",
@@ -34,20 +34,46 @@ def main(logging_level: str) -> None:
     colorlog.basicConfig(level=logging_level)
 
 
-@main.command("run")
+@main.command("forward")
 @click.option(
     "--disable-uvloop",
     is_flag=True,
     flag_value=True,
     help="If provided, use the standard asyncio event loop rather than libuv.",
 )
-def run(
+@click.option(
+    "--host",
+    type=click.STRING,
+    default="127.0.0.1",
+    help="The host interface to serve on.",
+)
+@click.option(
+    "--port",
+    type=click.IntRange(min=1, max=2**16),
+    default=8080,
+    help="The port to host the proxy on.",
+)
+def forwarding_proxy(
     *,
     disable_uvloop: bool,
+    host: str,
+    port: int,
 ) -> None:
     """Run a new proxy server."""
-    with runner.Runner(use_uvloop=not disable_uvloop) as new_runner:
-        new_runner.run_once()
+    event_loop = loop.new_event_loop(use_uvloop=not disable_uvloop)
+
+    proxy = forwarding.ForwardingProxy(
+        host=host,
+        loop=event_loop,
+        port=port,
+    )
+
+    try:
+        event_loop.run_until_complete(proxy.start())
+        event_loop.run_until_complete(proxy.wait())
+    finally:
+        event_loop.run_until_complete(proxy.close())
+        loop.tidy_up_and_close(event_loop)
 
 
 __all__: Final[Sequence[str]] = ("main",)
